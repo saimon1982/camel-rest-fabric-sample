@@ -13,7 +13,7 @@ spec:
             - configMapRef:
                 name: camel-rest-service-configmap
           name: "camel-rest"
-          image: "camel-rest-service:latest"
+          image: " camel-rest-sample/camel-rest-sample:latest"
           ports:
             - containerPort: 8080
               protocol: "TCP"
@@ -27,6 +27,6 @@ spec:
           - "camel-rest"
         from:
           kind: "ImageStreamTag"
-          name: "camel-rest-service:latest"
+          name: " camel-rest-sample/camel-rest-sample:latest"
   strategy:
     type: "Rolling"
