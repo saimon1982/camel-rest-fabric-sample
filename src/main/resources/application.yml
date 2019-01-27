@@ -1,0 +1,81 @@
+# this name is used by Jaeger client also
+spring:
+  application:
+    name: 'njia'
+camel:
+  springboot:
+    name: ServicesRest
+# services
+server:
+  address: 0.0.0.0
+  port: 8080
+# management port
+management:
+  address: 0.0.0.0
+  port: 8081
+  security:
+    enabled: false # Must be changed in production !!!
+# management endpoints
+  endpoint:
+    health:
+      enabled: true
+    info:
+      enabled: true
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+# enables percentiles for HTTP requests
+  metrics:
+    distribution:
+      percentiles:
+        http:
+          server:
+            requests: 0.75, 0.9, 0.99
+    #  percentiles-histogram:
+    #    http:
+    #      server: true
+    export:
+      prometheus:
+        enabled: true
+quickstart:
+  generateOrderPeriod: 10s
+  processOrderPeriod: 30s
+# logging configuration
+logging:
+  config: 'classpath:logback.xml'
+
+# Service properties
+njia:
+  api:
+    path: '/api/v1'
+  service:
+    id: camel-rest
+
+metrics:
+  percentiles: 0.5,0.75,0.95
+  tags:
+  - name: myMetricTag1
+    value: myMetricTagValue1
+  - name: myMetricTag2
+    value: myMetricTagValue2
+tracer:
+  tags:
+  - name: myTracerTag1
+    value: myTracerTagValue1
+  - name: myTracerTag2
+    value: myTracerTagValue2
+  
+
+# opentracing parameters
+opentracing:
+  jaeger:
+# disable log to console
+    log-spans: false
+# sample each call: not for production (0.1 is one sample per 10 requests)
+    probabilistic-sampler:
+      sampling-rate: 1.0

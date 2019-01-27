@@ -1,0 +1,82 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: camel-rest-service
+  annotations:
+    "openshift.io/display-name": CamelREST
+    description: A Camel based Rest Service.
+    iconClass: fa fa-cogs
+    tags: "rest, camel, springboot"
+parameters:
+- description: The namespace to instantiate the REST service under. Defaults to 'camel-rest-example'
+  name: NAMESPACE
+  value: camel-rest-sample
+- description: The location of the REST Service Image
+  name: IMAGE_CAMEL_REST
+  value: vmarchese/camel-rest-test:1.0.0
+- description: The location of the jaeger agent image
+  name: IMAGE_JAEGER_AGENT
+  value: jaegertracing/jaeger-agent
+- description: REST Service Listening Port
+  name: REST_SERVICE_PORT
+  value: "8080"
+- description: Jaeger Agent Port
+  name: JAEGER_AGENT_PORT
+  value: "6831"
+
+objects:
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    name: camel-rest-route
+    namespace: "${NAMESPACE}"
+  spec:
+    path: /
+    to:
+      kind: Service
+      name: camel-rest-service
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: camel-rest-service
+    namespace: "${NAMESPACE}"
+  spec:
+    ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+    selector:
+      app: camel-rest
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    name: camel-rest
+    namespace: "${NAMESPACE}"
+    labels:
+      app: camel-rest
+  spec:
+    containers:
+      - name: camel-rest
+        env:
+        - name: JAEGER_AGENT_HOST
+          value: "localhost"
+        - name: JAEGER_AGENT_PORT
+          value: "${JAEGER_AGENT_PORT}"
+        - name: JAEGER_SERVICE_NAME
+          value: "camel-hello"
+        image: "${IMAGE_CAMEL_REST}"
+        ports:
+        - containerPort: "${REST_SERVICE_PORT}"
+      - name: jaeger-agent
+        image: "${IMAGE_JAEGER_AGENT}"
+        ports:
+        - containerPort: 5775
+          protocol: UDP
+        - containerPort: 5778
+          protocol: UDP
+        - containerPort: "${JAEGER_AGENT_PORT}"
+          protocol: UDP
+        - containerPort: 6832
+          protocol: UDP
+        args:
+        - "--collector.host-port=jaeger-collector.jaeger.svc:14267"

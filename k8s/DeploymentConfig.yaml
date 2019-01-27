@@ -1,0 +1,32 @@
+kind: "DeploymentConfig"
+apiVersion: "v1"
+metadata:
+  name: "camel-rest-service-deployment"
+spec:
+  template:
+    metadata:
+      labels:
+        name: "camel-rest-service"
+    spec:
+      containers:
+        - envFrom:
+            - configMapRef:
+                name: camel-rest-service-configmap
+          name: "camel-rest"
+          image: "camel-rest-service:latest"
+          ports:
+            - containerPort: 8080
+              protocol: "TCP"
+  replicas: 2
+  triggers:
+    - type: "ConfigChange"
+    - type: "ImageChange"
+      imageChangeParams:
+        automatic: true
+        containerNames:
+          - "camel-rest"
+        from:
+          kind: "ImageStreamTag"
+          name: "camel-rest-service:latest"
+  strategy:
+    type: "Rolling"

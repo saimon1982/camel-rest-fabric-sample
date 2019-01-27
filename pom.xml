@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>it.poste.njia</groupId>
+    <artifactId>camel-rest-service</artifactId>
+    <version>0.1.0</version>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <fabric8.maven.plugin.version>3.5.33.fuse-000067-redhat-1</fabric8.maven.plugin.version>
+        <java.version>1.8</java.version>
+        <!-- Spring Boot BOM 2.1.1 -->
+        <spring-boot.version>2.1.1.RELEASE</spring-boot.version>
+        <!-- Camel Spring Boot BOM 2.23.0 -->
+        <camel-spring-boot.version>2.23.0</camel-spring-boot.version>
+
+        <!-- Jaeger Version -->
+        <jaeger.version>0.30.3</jaeger.version>
+
+        <maven-compiler-plugin.version>3.3</maven-compiler-plugin.version>
+        <maven-surefire-plugin.version>2.18.1</maven-surefire-plugin.version>
+
+        <!-- Micrometer version -->
+        <micrometer.version>1.1.1</micrometer.version>
+        
+        <!-- grpc -->
+        <protobuf-maven-plugin-version>0.5.1</protobuf-maven-plugin-version>
+        <protobuf-version>3.5.1</protobuf-version>
+        <grpc-version>1.15.0</grpc-version>
+        
+        <!-- enforcer plugin -->
+        <os-maven-plugin-version>1.6.0</os-maven-plugin-version>
+        
+        
+        </properties>
+
+    <dependencyManagement>
+        <dependencies>
+          <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-dependencies</artifactId>
+            <version>${spring-boot.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+          </dependency>
+          <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-spring-boot-dependencies</artifactId>
+            <version>${camel-spring-boot.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+          </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-spring-javaconfig</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-servlet-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jackson-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-swagger-java-starter</artifactId>
+        </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-metrics-starter</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-micrometer-starter</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-aspects</artifactId>
+    </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-metrics</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-micrometer</artifactId>
+        </dependency>
+        <!-- tracing -->
+        <!-- <dependency>
+            <groupId>org.apache.camel.example</groupId>
+            <artifactId>camel-example-opentracing-loggingtracer</artifactId>
+            <version>${project.version}</version>
+        </dependency> -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-opentracing-starter</artifactId>
+        </dependency>
+        <dependency>
+            <!-- https://github.com/opentracing-contrib/java-spring-jaeger -->
+            <groupId>io.opentracing.contrib</groupId>
+            <artifactId>opentracing-spring-jaeger-web-starter</artifactId>
+            <version>1.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jaegertracing</groupId>
+            <artifactId>jaeger-client</artifactId>
+            <version>${jaeger.version}</version>
+        </dependency>
+        <!-- Prometheus metrics -->
+        <dependency>
+          <groupId>io.micrometer</groupId>
+          <artifactId>micrometer-registry-prometheus</artifactId>
+          <version>${micrometer.version}</version>
+        </dependency>
+        <!-- testing -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!--
+        <dependency>
+            <groupId>org.jboss.arquillian.junit</groupId>
+            <artifactId>arquillian-junit-container</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.fabric8</groupId>
+            <artifactId>fabric8-arquillian</artifactId>
+            <scope>test</scope>
+        </dependency>
+        -->
+        
+        <dependency>
+            <groupId>io.github.lognet</groupId>
+            <artifactId>grpc-spring-boot-starter</artifactId>
+            <version>3.0.0</version>
+        </dependency>   
+        
+<!--        
+        
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-netty</artifactId>
+            <version>${grpc-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-protobuf</artifactId>
+            <version>${grpc-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-stub</artifactId>
+            <version>${grpc-version}</version>
+        </dependency>
+        -->
+        
+        
+    </dependencies>
+
+
+
+    <build>
+        <extensions>
+            <extension>
+                <groupId>kr.motd.maven</groupId>
+                <artifactId>os-maven-plugin</artifactId>
+                <version>${os-maven-plugin-version}</version>
+            </extension>
+        </extensions>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring-boot.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.xolstice.maven.plugins</groupId>
+                <artifactId>protobuf-maven-plugin</artifactId>
+                <version>${protobuf-maven-plugin-version}</version>
+                <configuration>
+                    <protocArtifact>com.google.protobuf:protoc:${protobuf-version}:exe:${os.detected.classifier}</protocArtifact>
+                    <pluginId>grpc-java</pluginId>
+                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpc-version}:exe:${os.detected.classifier}</pluginArtifact>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>compile-custom</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>1.4.1</version>
+                <executions>
+                    <execution>
+                        <id>enforce</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <fail>false</fail>
+                            <rules>
+                                <requireUpperBoundDeps />
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            
+
+        </plugins>
+    </build>
+
+
+
+
+
+    <!-- used for adding maven repositories to download Fuse JARs -->
+    <profiles>
+        <profile>
+            <id>fuse.repos</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+
+            <repositories>
+                <repository>
+                    <id>maven.central</id>
+                    <name>Maven Central</name>
+                    <url>https://repo1.maven.org/maven2</url>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                    <releases>
+                        <enabled>true</enabled>
+                        <updatePolicy>never</updatePolicy>
+                    </releases>
+                </repository>
+                <repository>
+                    <id>redhat.ga</id>
+                    <name>Red Hat General Availability Repository</name>
+                    <url>https://maven.repository.redhat.com/ga</url>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                    <releases>
+                        <enabled>true</enabled>
+                        <updatePolicy>never</updatePolicy>
+                    </releases>
+                </repository>
+                <repository>
+                    <id>redhat.ea</id>
+                    <name>Red Hat Early Access Repository</name>
+                    <url>https://maven.repository.redhat.com/earlyaccess/all</url>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                    <releases>
+                        <enabled>true</enabled>
+                        <updatePolicy>never</updatePolicy>
+                    </releases>
+                </repository>
+
+            </repositories>
+
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>maven.central</id>
+                    <name>Maven Central</name>
+                    <url>https://repo1.maven.org/maven2</url>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                    <releases>
+                        <enabled>true</enabled>
+                        <updatePolicy>never</updatePolicy>
+                    </releases>
+                </pluginRepository>
+                <pluginRepository>
+                    <id>redhat.ga</id>
+                    <name>Red Hat General Availability Repository</name>
+                    <url>https://maven.repository.redhat.com/ga</url>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                    <releases>
+                        <enabled>true</enabled>
+                        <updatePolicy>never</updatePolicy>
+                    </releases>
+                </pluginRepository>
+                <pluginRepository>
+                    <id>redhat.ea</id>
+                    <name>Red Hat Early Access Repository</name>
+                    <url>https://maven.repository.redhat.com/earlyaccess/all</url>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                    <releases>
+                        <enabled>true</enabled>
+                        <updatePolicy>never</updatePolicy>
+                    </releases>
+                </pluginRepository>
+            </pluginRepositories>
+        </profile>
+    </profiles>
+
+
+
+</project>
